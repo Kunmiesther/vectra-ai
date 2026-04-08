@@ -89,17 +89,21 @@ const handleAnalyze = async () => {
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#4A5568', letterSpacing: '0.1em' }}>AUTO-SAVE ACTIVE</span>
             </div>
             <button
-              onClick={handleAnalyze}
-disabled={loading || !text.trim()}
-              style={{
-                padding: '8px 20px', background: '#4F7CFF',
-                border: 'none', borderRadius: 5, color: '#fff',
-                fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
-                cursor: 'pointer', letterSpacing: '0.1em',
-              }}
-            >
-              ANALYZE
-            </button>
+  onClick={handleAnalyze}
+  disabled={loading || !text.trim()}
+  style={{
+    padding: '8px 20px', 
+    background: loading ? '#2a4299' : '#4F7CFF',
+    border: 'none', borderRadius: 5, color: '#fff',
+    fontFamily: "'JetBrains Mono', monospace", fontSize: 10,
+    cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.1em',
+    display: 'flex', alignItems: 'center', gap: 6,
+    opacity: !text.trim() ? 0.5 : 1,
+  }}
+>
+  {loading && <Loader2 size={11} style={{ animation: 'spin 1s linear infinite' }} />}
+  {loading ? 'ANALYZING...' : 'ANALYZE'}
+</button>
           </div>
         </div>
 

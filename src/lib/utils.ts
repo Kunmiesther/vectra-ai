@@ -28,31 +28,59 @@ export function parseVectraOutput(text: string) {
     return text.match(regex)?.[1]?.trim() || ''
   }
 
-  const scoreMatch = extract('FEASIBILITY SCORE').match(/(\d+)\/100/)
-  
+  const scoreRaw = extract('FEASIBILITY SCORE')
+  const scoreMatch = scoreRaw.match(/(\d+)\/100/)
+  const scoreVerdict = scoreRaw.split('—')[1]?.trim() || 'VIABLE'
+
+  const weaknesses = extract('CRITICAL WEAKNESSES')
+    .split('\n')
+    .filter(l => l.match(/^\d+\./))
+    .map(l => {
+      const clean = l.replace(/^\d+\.\s*/, '')
+      const parts = clean.split(' — ')
+      return {
+        name: parts[0]?.trim() || '',
+        description: parts.slice(1).join(' — ')?.trim() || ''
+      }
+    })
+
+  const rejectedPaths = extract('REJECTED PATHS')
+    .split('\n')
+    .filter(l => l.startsWith('-'))
+    .map(l => {
+      const clean = l.replace(/^-\s*/, '')
+      const colonIdx = clean.indexOf(': ')
+      return {
+        name: colonIdx > -1 ? clean.slice(0, colonIdx).trim() : clean,
+        reason: colonIdx > -1 ? clean.slice(colonIdx + 2).trim() : ''
+      }
+    })
+
+  const dirRaw = extract('RECOMMENDED DIRECTION')
+  const dirLines = dirRaw.split('\n')
+  const dirFirstLine = dirLines[0] || ''
+  const dirParts = dirFirstLine.split(' — ')
+  const confMatch = dirRaw.match(/Confidence:\s*(\d+)%/)
+
   return {
     feasibilityScore: scoreMatch ? parseInt(scoreMatch[1]) : 0,
+    scoreVerdict,
     strategicReading: extract('STRATEGIC READING'),
-    criticalWeaknesses: extract('CRITICAL WEAKNESSES')
-      .split('\n')
-      .filter(l => l.trim())
-      .map(l => {
-        const [name, ...desc] = l.replace(/^\d+\.\s*/, '').split(' — ')
-        return { name: name?.trim(), description: desc.join(' — ')?.trim() }
-      }),
-    recommendedDirection: extract('RECOMMENDED DIRECTION'),
-    rejectedPaths: extract('REJECTED PATHS')
-      .split('\n')
-      .filter(l => l.startsWith('-'))
-      .map(l => l.replace('- ', '').split(': '))
-      .map(([name, reason]) => ({ name, reason })),
+    criticalWeaknesses: weaknesses,
+    recommendedDirection: {
+      name: dirParts[0]?.trim() || '',
+      description: dirParts.slice(1).join(' — ')?.trim() || dirLines.slice(1).join(' ').trim(),
+      confidence: confMatch ? parseInt(confMatch[1]) : 0
+    },
+    rejectedPaths,
     executionRoadmap: extract('EXECUTION ROADMAP')
       .split('\n')
-      .filter(l => l.trim())
-      .map(l => l.replace(/^\d+\.\s*/, '')),
+      .filter(l => l.match(/^\d+\./))
+      .map(l => l.replace(/^\d+\.\s*/, '').trim()),
     mvpScope: {
-      build: extract('MVP SCOPE').match(/BUILD: (.+)/)?.[1]?.split(', ') || [],
-      skip: extract('MVP SCOPE').match(/SKIP: (.+)/)?.[1]?.split(', ') || []
-    }
+      build: extract('MVP SCOPE').match(/BUILD:\s*(.+)/)?.[1]?.split(', ').map(s => s.trim()) || [],
+      skip: extract('MVP SCOPE').match(/SKIP:\s*(.+)/)?.[1]?.split(', ').map(s => s.trim()) || []
+    },
+    rawText: text
   }
 }
