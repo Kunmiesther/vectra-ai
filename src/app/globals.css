@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base Reset ──────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background-color: #05070F;
+  color: #E6EEF8;
+  font-family: 'Sora', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0F1C;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2D3748;
+}
+
+/* ─── Range Input ─────────────────────────────────────────────────────────── */
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  border-radius: 2px;
+  background: #1E293B;
+  outline: none;
+  width: 100%;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4F7CFF;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(79, 124, 255, 0.5);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4F7CFF;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(79, 124, 255, 0.5);
+}
+
+/* ─── Textarea ────────────────────────────────────────────────────────────── */
+
+textarea::placeholder {
+  color: #4A5568;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+/* ─── Selection ───────────────────────────────────────────────────────────── */
+
+::selection {
+  background: rgba(79, 124, 255, 0.3);
+  color: #E6EEF8;
+}
+
+/* ─── Utilities ───────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .text-shadow-blue {
+    text-shadow: 0 0 20px rgba(79, 124, 255, 0.5);
+  }
+
+  .glow-dot-green {
+    box-shadow: 0 0 6px #10B981;
+  }
+
+  .glow-dot-blue {
+    box-shadow: 0 0 6px #4F7CFF;
+  }
+
+  .glow-dot-cyan {
+    box-shadow: 0 0 6px #22D3EE;
+  }
+
+  .border-top-gradient {
+    position: relative;
+  }
+
+  .border-top-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #4F7CFF, #22D3EE);
+    border-radius: 10px 10px 0 0;
+  }
+}
