@@ -5,6 +5,15 @@ import { AlertTriangle, Radio, CheckCircle2, Download } from 'lucide-react'
 import { MonoBadge, StatusChip } from '@/components/ui/primitives'
 
 export function StrategyPage() {
+  const [result, setResult] = useState('')
+const [idea, setIdea] = useState('')
+
+useEffect(() => {
+  const stored = localStorage.getItem('vectra-result')
+  const storedIdea = localStorage.getItem('vectra-idea')
+  if (stored) setResult(stored)
+  if (storedIdea) setIdea(storedIdea)
+}, [])
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', minHeight: 'calc(100vh - 84px)' }}>
 
@@ -258,13 +267,3 @@ export function StrategyPage() {
     </div>
   )
 }
-
-const [result, setResult] = useState('')
-const [idea, setIdea] = useState('')
-
-useEffect(() => {
-  const stored = localStorage.getItem('vectra-result')
-  const storedIdea = localStorage.getItem('vectra-idea')
-  if (stored) setResult(stored)
-  if (storedIdea) setIdea(storedIdea)
-}, [])
