@@ -242,7 +242,7 @@ export function LandingPage({ setPage }: LandingPageProps) {
         <p style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, color: '#64748B', marginBottom: 32 }}>
           Gain exclusive access to the Vectra Command Center. Our systems are currently in high-demand phased rollout.
         </p>
-        <button
+        <button onClick={() => window.open('https://t.me/VectraStrategicBot', '_blank')}
           style={{
             padding: '14px 36px',
             background: 'linear-gradient(135deg, #4F7CFF, #3B5BDB)',
@@ -252,7 +252,7 @@ export function LandingPage({ setPage }: LandingPageProps) {
             boxShadow: '0 0 30px rgba(79,124,255,0.25)',
           }}
         >
-          REQUEST ACCESS TOKEN
+          REQUEST TELEGRAM ACCESS
         </button>
         <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
           <StatusChip label="CURRENT NETWORK LATENCY: 12MS" color="#4A5568" />

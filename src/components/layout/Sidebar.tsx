@@ -129,7 +129,11 @@ export function Sidebar({ page, setPage }: SidebarProps) {
       {/* CTA */}
       <div style={{ padding: '0 14px 16px' }}>
         <button
-          onClick={() => setPage('dashboard')}
+          onClick={() => {
+            localStorage.removeItem('vectra-result')
+            localStorage.removeItem('vectra-idea')
+            setPage('dashboard')}
+          }
           style={{
             width: '100%',
             padding: '11px 0',
