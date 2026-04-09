@@ -23,12 +23,12 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'landing',    label: 'Dashboard',      Icon: LayoutDashboard },
-  { id: 'dashboard',  label: 'New Analysis',   Icon: PlusCircle },
+  { id: 'landing',    label: 'Dashboard',       Icon: LayoutDashboard },
+  { id: 'dashboard',  label: 'New Analysis',    Icon: PlusCircle },
   { id: 'strategy',   label: 'Strategy Output', Icon: TrendingUp },
-  { id: 'history',    label: 'History',        Icon: History },
-  { id: 'checklists', label: 'Checklists',     Icon: CheckSquare },
-  { id: 'settings',   label: 'Settings',       Icon: Settings },
+  { id: 'history',    label: 'History',         Icon: History },
+  { id: 'checklists', label: 'Checklists',      Icon: CheckSquare },
+  { id: 'settings',   label: 'Settings',        Icon: Settings },
 ]
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -153,11 +153,20 @@ export function Sidebar({ page, setPage }: SidebarProps) {
       {/* Footer nav */}
       <div style={{ padding: '10px 0' }}>
         {[
-          { label: 'Support', Icon: LifeBuoy },
-          { label: 'Logs',    Icon: Terminal },
-        ].map(({ label, Icon }) => (
+          {
+            label: 'Support',
+            Icon: LifeBuoy,
+            onClick: () => window.open('https://t.me/VectraStrategicBot', '_blank'),
+          },
+          {
+            label: 'Logs',
+            Icon: Terminal,
+            onClick: () => setPage('history'),
+          },
+        ].map(({ label, Icon, onClick }) => (
           <button
             key={label}
+            onClick={onClick}
             style={{
               width: '100%',
               display: 'flex',

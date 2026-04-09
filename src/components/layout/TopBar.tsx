@@ -2,14 +2,16 @@
 
 import { Bell, User, Lock } from 'lucide-react'
 import { StatusChip } from '@/components/ui/primitives'
+import type { PageId } from '@/types'
 
 // ─── TopBar ───────────────────────────────────────────────────────────────────
 
 interface TopBarProps {
-  title?: string
+  title: string
+  setPage: (id: PageId) => void
 }
 
-export function TopBar({ title }: TopBarProps) {
+export function TopBar({ title, setPage }: TopBarProps) {
   return (
     <header
       style={{
@@ -63,24 +65,37 @@ export function TopBar({ title }: TopBarProps) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <button
-          style={{
-            padding: '7px 18px',
-            background: 'transparent',
-            border: '1px solid #4F7CFF',
-            borderRadius: 5,
-            color: '#4F7CFF',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 10,
-            cursor: 'pointer',
-            letterSpacing: '0.1em',
-          }}
-        >
-          EXECUTE STRATEGY
-        </button>
-        <Bell size={16} color="#4A5568" style={{ cursor: 'pointer' }} />
-        <User size={16} color="#4A5568" style={{ cursor: 'pointer' }} />
-      </div>
+  <button
+    onClick={() => setPage('dashboard')}
+    style={{
+      padding: '7px 18px',
+      background: 'transparent',
+      border: '1px solid #4F7CFF',
+      borderRadius: 5,
+      color: '#4F7CFF',
+      fontFamily: "'JetBrains Mono', monospace",
+      fontSize: 10,
+      cursor: 'pointer',
+      letterSpacing: '0.1em',
+    }}
+  >
+    EXECUTE STRATEGY
+  </button>
+
+  <button
+    onClick={() => setPage('history')}
+    style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+  >
+    <Bell size={16} color="#4A5568" />
+  </button>
+
+  <button
+    onClick={() => setPage('settings')}
+    style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+  >
+    <User size={16} color="#4A5568" />
+  </button>
+</div>
     </header>
   )
 }
