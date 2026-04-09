@@ -49,7 +49,7 @@ export function LandingPage({ setPage }: LandingPageProps) {
           <div
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: '#0F172A', border: '1px solid #1E293B',
+              background: '#0A0C14', border: '1px solid #1E293B',
               borderRadius: 20, padding: '5px 14px', marginBottom: 32,
             }}
           >
@@ -104,7 +104,7 @@ export function LandingPage({ setPage }: LandingPageProps) {
           margin: '0 60px',
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
-          background: '#0F172A',
+          background: '#0A0C14',
         }}
       >
         {[
@@ -116,7 +116,7 @@ export function LandingPage({ setPage }: LandingPageProps) {
           <div
             key={i}
             style={{
-              background: '#0A0F1C',
+              background: '#05070F',
               padding: '28px 24px',
               borderRight: i < 3 ? '1px solid #1E293B' : 'none',
             }}
@@ -145,13 +145,13 @@ export function LandingPage({ setPage }: LandingPageProps) {
             <div
               key={i}
               style={{
-                background: '#0A0F1C', border: '1px solid #1E293B',
+                background: '#05070F', border: '1px solid #1E293B',
                 borderRadius: 10, padding: '28px',
               }}
             >
               <div
                 style={{
-                  width: 40, height: 40, background: '#0F172A',
+                  width: 40, height: 40, background: '#0A0C14',
                   border: '1px solid #1E293B', borderRadius: 8,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   marginBottom: 18,
@@ -170,7 +170,7 @@ export function LandingPage({ setPage }: LandingPageProps) {
       <section
         style={{
           margin: '0 60px', padding: '60px',
-          background: '#0A0F1C', border: '1px solid #1E293B',
+          background: '#05070F', border: '1px solid #1E293B',
           borderRadius: 12, display: 'grid',
           gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center',
         }}
@@ -205,7 +205,7 @@ export function LandingPage({ setPage }: LandingPageProps) {
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#4A5568', letterSpacing: '0.12em', marginBottom: 12 }}>ANALYSIS ENGINE V4.2.0-RUNTIME</div>
           <div
             style={{
-              background: '#0F172A', border: '1px solid #4F7CFF',
+              background: '#0A0C14', border: '1px solid #4F7CFF',
               borderRadius: 6, padding: '12px 16px', marginBottom: 16,
             }}
           >
@@ -228,7 +228,7 @@ export function LandingPage({ setPage }: LandingPageProps) {
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#4A5568' }}>{i === 0 ? 'LOW PROBABILITY' : 'REC: BOTTLENECK'}</span>
             </div>
           ))}
-          <div style={{ marginTop: 16, background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 6, padding: 12 }}>
+          <div style={{ marginTop: 16, background: '#05070F', border: '1px solid #1E293B', borderRadius: 6, padding: 12 }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B' }}>
               &ldquo;Strategy finalized. Recommendation: Focus on immediate liquidity over long-term scaling in Q1...&rdquo;
             </span>

@@ -47,7 +47,7 @@ export function Sidebar({ page, setPage }: SidebarProps) {
         width: 220,
         minHeight: '100vh',
         background: '#05070F',
-        borderRight: '1px solid #0F172A',
+        borderRight: '1px solid #0A0C14',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -61,7 +61,7 @@ export function Sidebar({ page, setPage }: SidebarProps) {
       <div
         style={{
           padding: '22px 20px 18px',
-          borderBottom: '1px solid #0F172A',
+          borderBottom: '1px solid #0A0C14',
         }}
       >
         <div
@@ -102,7 +102,7 @@ export function Sidebar({ page, setPage }: SidebarProps) {
                 alignItems: 'center',
                 gap: 11,
                 padding: '11px 20px',
-                background: active ? '#0F172A' : 'transparent',
+                background: active ? '#0A0C14' : 'transparent',
                 borderLeft: active ? '2px solid #4F7CFF' : '2px solid transparent',
                 border: 'none',
                 cursor: 'pointer',

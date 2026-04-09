@@ -10,12 +10,12 @@ module.exports = {
       colors: {
         // Background layers
         'bg-deep':    '#05070F',
-        'bg-mid':     '#0A0F1C',
-        'bg-raised':  '#0D1320',
+        'bg-mid':     '#05070F',
+        'bg-raised':  '#08090F',
         // Panel colors
-        'panel':      '#101827',
-        'panel-alt':  '#0F172A',
-        'panel-deep': '#131D2E',
+        'panel':      '#080C15',
+        'panel-alt':  '#0A0C14',
+        'panel-deep': '#0C1018',
         // Text
         'text-primary':   '#E6EEF8',
         'text-secondary': '#94A3B8',

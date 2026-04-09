@@ -28,7 +28,7 @@ export function ChecklistsPage() {
           {CHECKLIST_SECTIONS.map((section, si) => (
             <div
               key={si}
-              style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}
+              style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}
             >
               {/* Card header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
@@ -60,7 +60,7 @@ export function ChecklistsPage() {
         </div>
 
         {/* System activity log terminal */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, overflow: 'hidden' }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, overflow: 'hidden' }}>
           <div
             style={{
               padding: '12px 18px', borderBottom: '1px solid #1E293B',
@@ -99,7 +99,7 @@ export function ChecklistsPage() {
 
       {/* ── Right: Final Submission ── */}
       <div>
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 24, marginBottom: 16 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 24, marginBottom: 16 }}>
           <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 700, color: '#E6EEF8', marginBottom: 8 }}>
             04. Final Submission
           </div>
@@ -127,7 +127,7 @@ export function ChecklistsPage() {
         </div>
 
         {/* Progress summary */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 14 }}>READINESS SUMMARY</div>
           {[
             { label: 'Build Architecture', pct: 88,  color: '#22D3EE' },

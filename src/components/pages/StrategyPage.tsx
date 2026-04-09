@@ -120,7 +120,7 @@ export function StrategyPage() {
         </div>
 
         {/* Strategic reading */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 24 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 24 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#22D3EE', letterSpacing: '0.15em', marginBottom: 14 }}>01 / STRATEGIC READING</div>
           {strategicReading.split('\n\n').map((para, i, arr) => (
             <p key={i} style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, color: '#94A3B8', lineHeight: 1.8, marginBottom: i < arr.length - 1 ? 16 : 0 }}>
@@ -136,7 +136,7 @@ export function StrategyPage() {
         </div>
 
         {/* Recommended build direction */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 24 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 24 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.15em', marginBottom: 14 }}>02 / RECOMMENDED BUILD DIRECTION</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ flex: 1 }}>
@@ -152,7 +152,7 @@ export function StrategyPage() {
 
         {/* Differentiation + Critical weaknesses */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#22D3EE', letterSpacing: '0.15em', marginBottom: 14 }}>03 / DIFFERENTIATION STRATEGY</div>
             <h3 style={{ fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 700, color: '#E6EEF8', marginBottom: 10 }}>The Moat Principle</h3>
             <p style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, color: '#64748B', lineHeight: 1.7, marginBottom: 18 }}>
@@ -168,7 +168,7 @@ export function StrategyPage() {
             </div>
           </div>
 
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#EF4444', letterSpacing: '0.15em', marginBottom: 14 }}>04 / CRITICAL WEAKNESSES</div>
             {weaknesses.slice(0, 3).map(({ name, description }, i) => (
               <div key={i} style={{ marginBottom: 14 }}>
@@ -183,7 +183,7 @@ export function StrategyPage() {
         </div>
 
         {/* Rejected alternatives */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.15em', marginBottom: 16 }}>05 / REJECTED ALTERNATIVES (STRATEGIC DISMISSAL)</div>
           <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(rejectedPaths.length, 3)}, 1fr)`, gap: 16 }}>
             {rejectedPaths.slice(0, 3).map(({ name, reason }, i) => (
@@ -197,7 +197,7 @@ export function StrategyPage() {
 
         {/* Execution timeline + MVP scope */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#22D3EE', letterSpacing: '0.15em', marginBottom: 18 }}>06 / EXECUTION TIMELINE</div>
             {roadmap.slice(0, 4).map(({ phase, period, active }, i) => (
               <div key={i} style={{ display: 'flex', gap: 14, marginBottom: 18 }}>
@@ -215,7 +215,7 @@ export function StrategyPage() {
             ))}
           </div>
 
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#22D3EE', letterSpacing: '0.15em', marginBottom: 16 }}>07 / MVP SCOPE</div>
 
             <div style={{ marginBottom: 16 }}>
@@ -256,7 +256,7 @@ export function StrategyPage() {
       <div style={{ padding: '28px 20px', borderLeft: '1px solid #1E293B', display: 'flex', flexDirection: 'column', gap: 16, overflowY: 'auto' }}>
 
         {/* Feasibility verdict */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#22D3EE', letterSpacing: '0.12em', marginBottom: 16 }}>FEASIBILITY VERDICT</div>
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
             <div style={{
@@ -297,7 +297,7 @@ export function StrategyPage() {
         </div>
 
         {/* Core strengths */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 12 }}>CORE STRENGTHS</div>
           {['Neural Asymmetry', 'Total Resource Isolation', 'Sovereign Infrastructure'].map((s, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
@@ -308,7 +308,7 @@ export function StrategyPage() {
         </div>
 
         {/* Status chips */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 12 }}>EXECUTION FLAGS</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <StatusChip label="ANALYSIS COMPLETE"       color="#10B981" />
@@ -320,7 +320,7 @@ export function StrategyPage() {
 
         {/* Raw output preview */}
         {hasRealData && (
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 12 }}>RAW AGENT OUTPUT</div>
             <div style={{
               fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#4A5568',

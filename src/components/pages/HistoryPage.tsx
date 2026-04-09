@@ -36,7 +36,7 @@ export function HistoryPage() {
               { label: 'TOTAL REPORTS', val: '1,248',  color: '#E6EEF8' },
               { label: 'EFFICIENCY',    val: '94.2%',  color: '#22D3EE' },
             ].map(({ label, val, color }) => (
-              <div key={label} style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 8, padding: '12px 18px', textAlign: 'center' }}>
+              <div key={label} style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 8, padding: '12px 18px', textAlign: 'center' }}>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', marginBottom: 4 }}>{label}</div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, fontWeight: 700, color }}>{val}</div>
               </div>
@@ -73,7 +73,7 @@ export function HistoryPage() {
 
         {/* Featured card */}
         {(filter === 'ALL RECORDS' || filter === 'DEPLOYED') && (
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E3A5F', borderRadius: 10, padding: 24, marginBottom: 16 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E3A5F', borderRadius: 10, padding: 24, marginBottom: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, flexWrap: 'wrap' }}>
@@ -132,7 +132,7 @@ export function HistoryPage() {
       <div style={{ padding: '28px 20px', borderLeft: '1px solid #1E293B', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* System Health */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
             <Activity size={13} color="#4F7CFF" />
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#94A3B8', letterSpacing: '0.12em' }}>SYSTEM HEALTH</span>
@@ -160,12 +160,12 @@ export function HistoryPage() {
         </div>
 
         {/* Security */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#94A3B8', letterSpacing: '0.12em', marginBottom: 14 }}>SYSTEM STATUS</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div
               style={{
-                width: 40, height: 40, background: '#0F172A',
+                width: 40, height: 40, background: '#0A0C14',
                 border: '1px solid #1E293B', borderRadius: 8,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
@@ -180,7 +180,7 @@ export function HistoryPage() {
         </div>
 
         {/* Quick stats */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 14 }}>RECORD BREAKDOWN</div>
           {[
             { label: 'DEPLOYED',  count: 892, color: '#10B981' },
@@ -203,7 +203,7 @@ export function HistoryPage() {
 function SmallHistoryCard({ card }: { card: HistoryCard }) {
   const color = statusColor(card.status)
   return (
-    <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+    <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
         <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#4A5568' }}>ID: {card.id}</span>
         <StatusChip label={card.status} color={color} />

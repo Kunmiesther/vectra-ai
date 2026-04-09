@@ -36,7 +36,7 @@ export function SettingsPage() {
                 key={label}
                 onClick={() => setActiveMode(label)}
                 style={{
-                  background: active ? '#0F172A' : '#0A0F1C',
+                  background: active ? '#0A0C14' : '#05070F',
                   border: `1px solid ${active ? '#4F7CFF' : '#1E293B'}`,
                   borderRadius: 10, padding: 18, cursor: 'pointer',
                   textAlign: 'left', position: 'relative',
@@ -59,7 +59,7 @@ export function SettingsPage() {
         </div>
 
         {/* Cognitive precision parameters */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 24, marginBottom: 16 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 24, marginBottom: 16 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.15em', marginBottom: 22 }}>
             COGNITIVE PRECISION PARAMETERS
           </div>
@@ -136,7 +136,7 @@ export function SettingsPage() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* Simulation preview */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em' }}>SIMULATION PREVIEW</span>
             <MonoBadge color="#22D3EE">99.4% CONFIDENCE</MonoBadge>
@@ -161,7 +161,7 @@ export function SettingsPage() {
         </div>
 
         {/* Security protocol */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 16 }}>SECURITY PROTOCOL</div>
           {[
             { label: 'Identity Mode', val: 'SOVEREIGN_ID', color: '#94A3B8' },
@@ -186,7 +186,7 @@ export function SettingsPage() {
         </div>
 
         {/* User card */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
           <div
             style={{
               width: 36, height: 36, borderRadius: '50%',
@@ -203,7 +203,7 @@ export function SettingsPage() {
         </div>
 
         {/* System mode status chips */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 12 }}>ACTIVE FLAGS</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <StatusChip label="STRATEGIC MODE ACTIVE" color="#4F7CFF" />
@@ -268,7 +268,7 @@ function ToggleCard({ label, desc, value, onToggle }: ToggleCardProps) {
   return (
     <div
       style={{
-        background: '#0A0F1C', border: '1px solid #1E293B',
+        background: '#05070F', border: '1px solid #1E293B',
         borderRadius: 10, padding: 20,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}

@@ -85,7 +85,7 @@ function LandingTopBar() {
       style={{
         padding: '12px 28px',
         background: '#05070F',
-        borderBottom: '1px solid #0F172A',
+        borderBottom: '1px solid #0A0C14',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

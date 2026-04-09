@@ -7,7 +7,7 @@ export function AgentConsole() {
   return (
     <div
       style={{
-        background: '#0A0F1C',
+        background: '#05070F',
         border: '1px solid #1E293B',
         borderRadius: 8,
       }}

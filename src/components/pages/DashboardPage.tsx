@@ -48,25 +48,25 @@ const handleAnalyze = async () => {
         {/* Stats row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           <StatCard label="FEASIBILITY SCORE" value="84.2" sub="/ 100" color="#22D3EE" />
-          <div style={{ background: '#101827', border: '1px solid #1E293B', borderRadius: 8, padding: '16px 20px' }}>
+          <div style={{ background: '#080C15', border: '1px solid #1E293B', borderRadius: 8, padding: '16px 20px' }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 8 }}>CORE RISK COUNT</div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 30, fontWeight: 700, color: '#EF4444', lineHeight: 1 }}>03</span>
               <MonoBadge color="#EF4444">CRITICAL</MonoBadge>
             </div>
           </div>
-          <div style={{ background: '#101827', border: '1px solid #1E293B', borderRadius: 8, padding: '16px 20px' }}>
+          <div style={{ background: '#080C15', border: '1px solid #1E293B', borderRadius: 8, padding: '16px 20px' }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 8 }}>RECOMMENDED PATH</div>
             <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 700, color: '#E6EEF8' }}>{DASHBOARD_STATS.recommendedPath}</div>
           </div>
-          <div style={{ background: '#101827', border: '1px solid #1E293B', borderRadius: 8, padding: '16px 20px' }}>
+          <div style={{ background: '#080C15', border: '1px solid #1E293B', borderRadius: 8, padding: '16px 20px' }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 8 }}>EXECUTION READINESS</div>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 22, fontWeight: 700, color: '#10B981' }}>HIGH <span style={{ fontSize: 14 }}>↑</span></div>
           </div>
         </div>
 
         {/* Strategy input */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
             <ScanLine size={15} color="#4F7CFF" />
             <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: '#E6EEF8' }}>Strategy Initialization</span>
@@ -108,7 +108,7 @@ const handleAnalyze = async () => {
         </div>
 
         {/* Live analysis progress */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#94A3B8', letterSpacing: '0.12em' }}>LIVE ANALYSIS PROGRESS</span>
             <MonoBadge color="#22D3EE">SCANNING NODE 04...</MonoBadge>
@@ -135,7 +135,7 @@ const handleAnalyze = async () => {
 
         {/* Strategic interpretation + Critical weaknesses */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
               <div>
                 <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 700, color: '#E6EEF8', marginBottom: 4 }}>Strategic Interpretation</div>
@@ -152,7 +152,7 @@ const handleAnalyze = async () => {
             </p>
           </div>
 
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
             <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#94A3B8', letterSpacing: '0.12em', marginBottom: 14 }}>CRITICAL WEAKNESSES</div>
             {[
               { Icon: AlertTriangle, color: '#EF4444', bg: '#EF444415', title: 'CAPITAL LEAKAGE', desc: 'Inefficient gas routing during peak volatility could erode margins by 12%.' },
@@ -178,7 +178,7 @@ const handleAnalyze = async () => {
         {/* Winning path banner */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #0D1320 0%, #101827 100%)',
+            background: 'linear-gradient(135deg, #08090F 0%, #080C15 100%)',
             border: '1px solid #1E3A5F', borderRadius: 10, padding: 28,
             position: 'relative', overflow: 'hidden',
           }}
@@ -215,7 +215,7 @@ const handleAnalyze = async () => {
 
         {/* Core MVP + Do Not Build */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
               <Target size={13} color="#22D3EE" />
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#22D3EE', letterSpacing: '0.15em' }}>CORE MVP BUILD</span>
@@ -227,7 +227,7 @@ const handleAnalyze = async () => {
               </div>
             ))}
           </div>
-          <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
               <Slash size={13} color="#EF4444" />
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#EF4444', letterSpacing: '0.15em' }}>DO NOT BUILD</span>
@@ -242,14 +242,14 @@ const handleAnalyze = async () => {
         </div>
 
         {/* 7-step roadmap */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 22 }}>
           <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 700, color: '#E6EEF8', marginBottom: 20 }}>7-Step Strategic Roadmap</div>
           {ROADMAP_STEPS.map(({ n, color, label, desc }, i) => (
             <div key={i} style={{ display: 'flex', gap: 16, marginBottom: 18 }}>
               <div
                 style={{
                   width: 32, height: 32, borderRadius: '50%',
-                  background: '#101827', border: `1px solid ${color}`,
+                  background: '#080C15', border: `1px solid ${color}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                 }}
               >
@@ -275,7 +275,7 @@ const handleAnalyze = async () => {
         }}
       >
         {/* Strategy Confidence gauge */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 20, textAlign: 'center' }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 20, textAlign: 'center' }}>
           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', letterSpacing: '0.12em', marginBottom: 16 }}>STRATEGY CONFIDENCE</div>
           <RingGauge value={91} label="OPTIMIZED" color="#22D3EE" />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 16 }}>
@@ -293,8 +293,8 @@ const handleAnalyze = async () => {
         <AgentConsole />
 
         {/* Node topology */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, overflow: 'hidden' }}>
-          <div style={{ background: '#131D2E', padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, overflow: 'hidden' }}>
+          <div style={{ background: '#0C1018', padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 6 }}>
             <Network size={11} color="#4F7CFF" />
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#94A3B8', letterSpacing: '0.1em' }}>NODE TOPOLOGY</span>
           </div>
@@ -307,7 +307,7 @@ const handleAnalyze = async () => {
         </div>
 
         {/* Rejected paths */}
-        <div style={{ background: '#0A0F1C', border: '1px solid #1E293B', borderRadius: 10, padding: 14 }}>
+        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 14 }}>
           {[
             { label: 'AGGREGATOR MODEL', tag: 'TOO BROAD',  color: '#F59E0B' },
             { label: 'DIRECT-TO-USER',  tag: 'LOW DIFF',   color: '#4A5568' },

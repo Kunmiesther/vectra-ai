@@ -82,7 +82,7 @@ export function StatCard({
   return (
     <div
       style={{
-        background: '#101827',
+        background: '#080C15',
         border: '1px solid #1E293B',
         borderRadius: 8,
         padding: '16px 20px',
