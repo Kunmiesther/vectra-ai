@@ -28,16 +28,17 @@ export function VectraShell() {
   const [page, setPage] = useState<PageId>('landing')
 
   const isLanding = page === 'landing'
+  const currentTitle = PAGE_TITLES[page] ?? ''
 
   function renderPage() {
     switch (page) {
-      case 'landing':    return <LandingPage    setPage={setPage} />
-      case 'dashboard':  return <DashboardPage  setPage={setPage} />
-      case 'strategy':   return <StrategyPage   />
-      case 'history':    return <HistoryPage    />
+      case 'landing':    return <LandingPage setPage={setPage} />
+      case 'dashboard':  return <DashboardPage setPage={setPage} />
+      case 'strategy':   return <StrategyPage />
+      case 'history':    return <HistoryPage />
       case 'checklists': return <ChecklistsPage />
-      case 'settings':   return <SettingsPage   />
-      default:           return <LandingPage    setPage={setPage} />
+      case 'settings':   return <SettingsPage />
+      default:           return <LandingPage setPage={setPage} />
     }
   }
 
@@ -63,7 +64,7 @@ export function VectraShell() {
       >
         {/* Top bar for all pages */}
         {!isLanding ? (
-          <TopBar title={PAGE_TITLES[page]} />
+          <TopBar title={currentTitle} setPage={setPage} />
         ) : (
           <LandingTopBar />
         )}
