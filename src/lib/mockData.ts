@@ -1,7 +1,6 @@
 import type {
   AgentLog,
   HistoryCard,
-  ChecklistSection,
   SystemLog,
   StrategyMode,
 } from '@/types'
@@ -53,47 +52,6 @@ export const HISTORY_CARDS: HistoryCard[] = [
     confidence: 91,
     statusLabel: 'Active',
     date: 'OCT 08, 2024',
-  },
-]
-
-// ─── Checklist Data ───────────────────────────────────────────────────────────
-
-export const CHECKLIST_SECTIONS: ChecklistSection[] = [
-  {
-    num: '01',
-    title: 'Build Architecture',
-    label: 'STRUCTURAL INTEGRITY',
-    pct: 88,
-    pctColor: '#22D3EE',
-    items: [
-      { label: 'Neural Weight Validation', status: 'verified', note: 'CHECKSUM OK' },
-      { label: 'Environment Syncing', status: 'progress', note: 'IN PROGRESS (72%)' },
-      { label: 'Dependency Isolation', status: 'verified', note: 'VERIFIED' },
-    ],
-  },
-  {
-    num: '02',
-    title: 'Scope Alignment',
-    label: 'MISSION PARAMETERS',
-    pct: 'Incomplete',
-    pctColor: '#EF4444',
-    items: [
-      { label: 'Target Range Definition', status: 'warning', note: 'REQUIRED ACTION' },
-      { label: 'Boundary Condition Lock', status: 'pending', note: 'PENDING APPROVAL' },
-      { label: 'Asset Verification', status: 'verified', note: 'VERIFIED' },
-    ],
-  },
-  {
-    num: '03',
-    title: 'Demo Protocol',
-    label: 'OUTPUT AESTHETICS',
-    pct: 'Awaiting',
-    pctColor: '#64748B',
-    items: [
-      { label: 'Resolution Calibration', status: 'verified', note: '4K MESH' },
-      { label: 'Interaction Simulation', status: 'pending', note: 'PENDING SEQUENCE' },
-      { label: 'Color Profile Match', status: 'verified', note: 'OBSIDIAN V2' },
-    ],
   },
 ]
 

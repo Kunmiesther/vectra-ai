@@ -5,15 +5,13 @@ import {
   Filter,
   Calendar,
   ArrowRight,
-  Eye,
-  ExternalLink,
   Activity,
   ShieldCheck,
 } from 'lucide-react'
 import { MonoBadge, StatusChip } from '@/components/ui/primitives'
 import { HISTORY_CARDS } from '@/lib/mockData'
 import { statusColor } from '@/lib/utils'
-import type { HistoryCard, PageId } from '@/types'
+import type { PageId } from '@/types'
 
 type FilterOption = 'ALL RECORDS' | 'DEPLOYED' | 'ARCHIVED' | 'FAILED'
 
@@ -24,6 +22,8 @@ interface HistoryPageProps {
 export function HistoryPage({ setPage }: HistoryPageProps) {
   const [filter, setFilter] = useState<FilterOption>('ALL RECORDS')
   const [history, setHistory] = useState<any[]>([])
+  const [isMobile, setIsMobile] = useState(false)
+  const [isTablet, setIsTablet] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem('vectra-history')
@@ -34,6 +34,17 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
     }
   }, [])
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1100)
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const displayHistory = history.length > 0 ? history : HISTORY_CARDS
 
   const filtered =
@@ -41,28 +52,27 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
       ? displayHistory
       : displayHistory.filter((c: any) => (c.status || '').toUpperCase() === filter)
 
-  const featuredCard =
-    filtered.length > 0 ? filtered[0] : null
-
-  const smallCards =
-    filtered.length > 1 ? filtered.slice(1) : []
+  const featuredCard = filtered.length > 0 ? filtered[0] : null
+  const smallCards = filtered.length > 1 ? filtered.slice(1) : []
 
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 260px',
+        gridTemplateColumns: isMobile || isTablet ? '1fr' : '1fr 260px',
         minHeight: 'calc(100vh - 84px)',
       }}
     >
       {/* ── Main ── */}
-      <div style={{ padding: 28, overflowY: 'auto' }}>
+      <div style={{ padding: isMobile ? 16 : 28, overflowY: 'auto' }}>
         {/* Page header */}
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            alignItems: isMobile ? 'flex-start' : 'center',
             justifyContent: 'space-between',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? 16 : 0,
             marginBottom: 24,
           }}
         >
@@ -70,7 +80,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
             <h1
               style={{
                 fontFamily: "'Sora', sans-serif",
-                fontSize: 26,
+                fontSize: isMobile ? 22 : 26,
                 fontWeight: 800,
                 color: '#E6EEF8',
               }}
@@ -90,7 +100,14 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 16 }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: 16,
+              width: isMobile ? '100%' : 'auto',
+              flexDirection: isMobile ? 'column' : 'row',
+            }}
+          >
             {[
               { label: 'TOTAL REPORTS', val: String(displayHistory.length), color: '#E6EEF8' },
               { label: 'EFFICIENCY', val: '94.2%', color: '#22D3EE' },
@@ -103,6 +120,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                   borderRadius: 8,
                   padding: '12px 18px',
                   textAlign: 'center',
+                  flex: isMobile ? 1 : 'unset',
                 }}
               >
                 <div
@@ -134,49 +152,54 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            alignItems: isMobile ? 'flex-start' : 'center',
             gap: 10,
             marginBottom: 24,
+            flexWrap: 'wrap',
+            flexDirection: isMobile ? 'column' : 'row',
           }}
         >
-          <Filter size={13} color="#4A5568" />
-          <span
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 9,
-              color: '#4A5568',
-              letterSpacing: '0.1em',
-            }}
-          >
-            FILTERS:
-          </span>
-
-          {(['ALL RECORDS', 'DEPLOYED', 'ARCHIVED', 'FAILED'] as FilterOption[]).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <Filter size={13} color="#4A5568" />
+            <span
               style={{
-                padding: '5px 14px',
-                background: filter === f ? '#1E293B' : 'transparent',
-                border: `1px solid ${filter === f ? '#4F7CFF' : '#1E293B'}`,
-                borderRadius: 4,
-                color: filter === f ? '#4F7CFF' : '#64748B',
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 9,
-                cursor: 'pointer',
-                letterSpacing: '0.08em',
+                color: '#4A5568',
+                letterSpacing: '0.1em',
               }}
             >
-              {f}
-            </button>
-          ))}
+              FILTERS:
+            </span>
+
+            {(['ALL RECORDS', 'DEPLOYED', 'ARCHIVED', 'FAILED'] as FilterOption[]).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                style={{
+                  padding: '5px 14px',
+                  background: filter === f ? '#1E293B' : 'transparent',
+                  border: `1px solid ${filter === f ? '#4F7CFF' : '#1E293B'}`,
+                  borderRadius: 4,
+                  color: filter === f ? '#4F7CFF' : '#64748B',
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 9,
+                  cursor: 'pointer',
+                  letterSpacing: '0.08em',
+                }}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
 
           <div
             style={{
-              marginLeft: 'auto',
+              marginLeft: isMobile ? 0 : 'auto',
               display: 'flex',
               alignItems: 'center',
               gap: 8,
+              flexWrap: 'wrap',
             }}
           >
             <span
@@ -199,7 +222,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
               background: '#05070F',
               border: '1px solid #1E3A5F',
               borderRadius: 10,
-              padding: 24,
+              padding: isMobile ? 16 : 24,
               marginBottom: 16,
               cursor: featuredCard.result ? 'pointer' : 'default',
             }}
@@ -215,7 +238,9 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'flex-start',
+                alignItems: isMobile ? 'flex-start' : 'flex-start',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? 12 : 0,
                 marginBottom: 16,
               }}
             >
@@ -244,19 +269,27 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                     ID: {featuredCard.id || 'VEC-ARCHIVE'}
                   </span>
                 </div>
+
                 <h2
                   style={{
                     fontFamily: "'Sora', sans-serif",
-                    fontSize: 20,
+                    fontSize: isMobile ? 17 : 20,
                     fontWeight: 800,
                     color: '#E6EEF8',
+                    lineHeight: 1.4,
                   }}
                 >
                   {featuredCard.idea || featuredCard.title || 'Archived Strategy'}
                 </h2>
               </div>
 
-              <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 16 }}>
+              <div
+                style={{
+                  textAlign: isMobile ? 'left' : 'right',
+                  flexShrink: 0,
+                  marginLeft: isMobile ? 0 : 16,
+                }}
+              >
                 <StatusChip
                   label={featuredCard.status || 'DEPLOYED'}
                   color={statusColor(featuredCard.status || 'DEPLOYED')}
@@ -279,7 +312,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
+                gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
                 gap: 16,
                 marginBottom: 18,
               }}
@@ -329,6 +362,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                       fontSize: 22,
                       fontWeight: 700,
                       color,
+                      wordBreak: 'break-word',
                     }}
                   >
                     {val}
@@ -342,10 +376,12 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? 12 : 0,
               }}
             >
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {['AI', 'SD', 'TX'].map((tag) => (
                   <MonoBadge key={tag}>{tag}</MonoBadge>
                 ))}
@@ -353,8 +389,10 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
 
               <button
                 style={{
+                  width: isMobile ? '100%' : 'auto',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: 6,
                   padding: '7px 16px',
                   background: 'transparent',
@@ -374,7 +412,13 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
         )}
 
         {/* Small cards grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+            gap: 16,
+          }}
+        >
           {smallCards.map((item: any, i: number) => (
             <div
               key={item.id || i}
@@ -388,7 +432,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
               onClick={() => {
                 if (item.result) {
                   localStorage.setItem('vectra-result', item.result)
-                  localStorage.setItem('vectra-idea', item.idea)
+                  localStorage.setItem('vectra-idea', item.idea || item.title || '')
                   setPage('strategy')
                 }
               }}
@@ -398,6 +442,8 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                   display: 'flex',
                   justifyContent: 'space-between',
                   marginBottom: 8,
+                  gap: 10,
+                  flexWrap: 'wrap',
                 }}
               >
                 <span
@@ -429,6 +475,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                   fontWeight: 600,
                   color: '#E6EEF8',
                   marginBottom: 8,
+                  lineHeight: 1.5,
                 }}
               >
                 {item.idea || item.title}
@@ -448,7 +495,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                 </p>
               )}
 
-              <div style={{ display: 'flex', gap: 16 }}>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 <div>
                   <div
                     style={{
@@ -500,8 +547,9 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
       {/* ── Right Rail ── */}
       <div
         style={{
-          padding: '28px 20px',
-          borderLeft: '1px solid #1E293B',
+          padding: isMobile ? '0 16px 16px' : isTablet ? '0 28px 28px' : '28px 20px',
+          borderLeft: !isMobile && !isTablet ? '1px solid #1E293B' : 'none',
+          borderTop: isMobile || isTablet ? '1px solid #1E293B' : 'none',
           display: 'flex',
           flexDirection: 'column',
           gap: 16,
@@ -540,6 +588,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                   display: 'flex',
                   justifyContent: 'space-between',
                   marginBottom: 6,
+                  gap: 8,
                 }}
               >
                 <span
@@ -607,6 +656,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                flexShrink: 0,
               }}
             >
               <ShieldCheck size={18} color="#4F7CFF" />
@@ -656,9 +706,21 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
             RECORD BREAKDOWN
           </div>
           {[
-            { label: 'DEPLOYED', count: filtered.filter((x: any) => (x.status || '').toUpperCase() === 'DEPLOYED').length, color: '#10B981' },
-            { label: 'ARCHIVED', count: filtered.filter((x: any) => (x.status || '').toUpperCase() === 'ARCHIVED').length, color: '#64748B' },
-            { label: 'FAILED', count: filtered.filter((x: any) => (x.status || '').toUpperCase() === 'FAILED').length, color: '#EF4444' },
+            {
+              label: 'DEPLOYED',
+              count: filtered.filter((x: any) => (x.status || '').toUpperCase() === 'DEPLOYED').length,
+              color: '#10B981',
+            },
+            {
+              label: 'ARCHIVED',
+              count: filtered.filter((x: any) => (x.status || '').toUpperCase() === 'ARCHIVED').length,
+              color: '#64748B',
+            },
+            {
+              label: 'FAILED',
+              count: filtered.filter((x: any) => (x.status || '').toUpperCase() === 'FAILED').length,
+              color: '#EF4444',
+            },
           ].map(({ label, count, color }) => (
             <div
               key={label}
@@ -667,6 +729,7 @@ export function HistoryPage({ setPage }: HistoryPageProps) {
                 justifyContent: 'space-between',
                 padding: '8px 0',
                 borderBottom: '1px solid #1E293B',
+                gap: 8,
               }}
             >
               <StatusChip label={label} color={color} />

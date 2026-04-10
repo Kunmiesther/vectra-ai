@@ -5,7 +5,6 @@ import {
   PlusCircle,
   TrendingUp,
   History,
-  CheckSquare,
   Settings,
   LifeBuoy,
   Terminal,
@@ -27,7 +26,6 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard',  label: 'New Analysis',    Icon: PlusCircle },
   { id: 'strategy',   label: 'Strategy Output', Icon: TrendingUp },
   { id: 'history',    label: 'History',         Icon: History },
-  { id: 'checklists', label: 'Checklists',      Icon: CheckSquare },
   { id: 'settings',   label: 'Settings',        Icon: Settings },
 ]
 

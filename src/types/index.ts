@@ -5,7 +5,6 @@ export type PageId =
   | 'dashboard'
   | 'strategy'
   | 'history'
-  | 'checklists'
   | 'settings'
 
 // ─── Data Models ─────────────────────────────────────────────────────────────
@@ -36,21 +35,6 @@ export interface HistoryCard {
   risk?: string
   note?: string
   statusLabel?: string
-}
-
-export interface ChecklistItem {
-  label: string
-  status: 'verified' | 'warning' | 'progress' | 'pending'
-  note: string
-}
-
-export interface ChecklistSection {
-  num: string
-  title: string
-  label: string
-  pct: number | string
-  pctColor: string
-  items: ChecklistItem[]
 }
 
 export interface SystemLog {

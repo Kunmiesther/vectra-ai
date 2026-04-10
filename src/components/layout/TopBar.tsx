@@ -4,8 +4,6 @@ import { Bell, User, Lock } from 'lucide-react'
 import { StatusChip } from '@/components/ui/primitives'
 import type { PageId } from '@/types'
 
-// ─── TopBar ───────────────────────────────────────────────────────────────────
-
 interface TopBarProps {
   title: string
   setPage: (id: PageId) => void
@@ -15,19 +13,27 @@ export function TopBar({ title, setPage }: TopBarProps) {
   return (
     <header
       style={{
-        height: 52,
         background: '#05070F',
         borderBottom: '1px solid #0A0C14',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 28px',
+        padding: '12px 16px',
         position: 'sticky',
         top: 0,
         zIndex: 50,
+        flexWrap: 'wrap',
+        gap: 12,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          flexWrap: 'wrap',
+        }}
+      >
         {title && (
           <span
             style={{
@@ -41,7 +47,9 @@ export function TopBar({ title, setPage }: TopBarProps) {
             {title}
           </span>
         )}
+
         <StatusChip label="STRATEGIC ENGINE ACTIVE" color="#4F7CFF" />
+
         <span
           style={{
             fontFamily: "'JetBrains Mono', monospace",
@@ -52,6 +60,7 @@ export function TopBar({ title, setPage }: TopBarProps) {
         >
           ANALYSIS READY
         </span>
+
         <span
           style={{
             fontFamily: "'JetBrains Mono', monospace",
@@ -64,43 +73,51 @@ export function TopBar({ title, setPage }: TopBarProps) {
         </span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-  <button
-    onClick={() => setPage('dashboard')}
-    style={{
-      padding: '7px 18px',
-      background: 'transparent',
-      border: '1px solid #4F7CFF',
-      borderRadius: 5,
-      color: '#4F7CFF',
-      fontFamily: "'JetBrains Mono', monospace",
-      fontSize: 10,
-      cursor: 'pointer',
-      letterSpacing: '0.1em',
-    }}
-  >
-    EXECUTE STRATEGY
-  </button>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          flexWrap: 'wrap',
+        }}
+      >
+        <button
+          onClick={() => {
+            const hasResult = localStorage.getItem('vectra-result')
+            setPage(hasResult ? 'strategy' : 'dashboard')
+          }}
+          style={{
+            padding: '9px 18px',
+            background: 'transparent',
+            border: '1px solid #4F7CFF',
+            borderRadius: 5,
+            color: '#4F7CFF',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 10,
+            cursor: 'pointer',
+            letterSpacing: '0.1em',
+          }}
+        >
+          EXECUTE STRATEGY
+        </button>
 
-  <button
-    onClick={() => setPage('history')}
-    style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-  >
-    <Bell size={16} color="#4A5568" />
-  </button>
+        <button
+          onClick={() => setPage('history')}
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+        >
+          <Bell size={16} color="#4A5568" />
+        </button>
 
-  <button
-    onClick={() => setPage('settings')}
-    style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-  >
-    <User size={16} color="#4A5568" />
-  </button>
-</div>
+        <button
+          onClick={() => setPage('settings')}
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+        >
+          <User size={16} color="#4A5568" />
+        </button>
+      </div>
     </header>
   )
 }
-
-// ─── BottomBar ────────────────────────────────────────────────────────────────
 
 export function BottomBar() {
   return (
