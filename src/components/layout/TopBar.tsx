@@ -1,15 +1,103 @@
 'use client'
 
-import { Bell, User, Lock } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { StatusChip } from '@/components/ui/primitives'
 import type { PageId } from '@/types'
+
+function WalletButton({
+  address,
+  connected,
+  onConnect,
+  onDisconnect,
+}: {
+  address: string
+  connected: boolean
+  onConnect: (addr: string) => void
+  onDisconnect: () => void
+}) {
+  const connect = async () => {
+    try {
+      const { solana } = window as any
+      if (!solana?.isPhantom) {
+        window.open('https://phantom.app/', '_blank')
+        return
+      }
+
+      const response = await solana.connect()
+      const addr = response.publicKey.toString()
+      onConnect(addr)
+    } catch {}
+  }
+
+  const disconnect = async () => {
+    try {
+      const { solana } = window as any
+      await solana?.disconnect()
+    } catch {}
+
+    onDisconnect()
+  }
+
+  if (connected && address) {
+    return (
+      <button
+        onClick={disconnect}
+        style={{
+          padding: '7px 14px',
+          background: 'rgba(79,124,255,0.1)',
+          border: '1px solid rgba(79,124,255,0.3)',
+          borderRadius: 5,
+          color: '#4F7CFF',
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 10,
+          cursor: 'pointer',
+          letterSpacing: '0.06em',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {address.slice(0, 4)}...{address.slice(-4)} · DISCONNECT
+      </button>
+    )
+  }
+
+  return (
+    <button
+      onClick={connect}
+      style={{
+        padding: '7px 18px',
+        background: '#4F7CFF',
+        border: 'none',
+        borderRadius: 5,
+        color: '#fff',
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: 10,
+        cursor: 'pointer',
+        letterSpacing: '0.08em',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      CONNECT WALLET
+    </button>
+  )
+}
 
 interface TopBarProps {
   title: string
   setPage: (id: PageId) => void
+  walletAddress: string
+  isWalletConnected: boolean
+  onWalletConnect: (addr: string) => void
+  onWalletDisconnect: () => void
 }
 
-export function TopBar({ title, setPage }: TopBarProps) {
+export function TopBar({
+  title,
+  setPage,
+  walletAddress,
+  isWalletConnected,
+  onWalletConnect,
+  onWalletDisconnect,
+}: TopBarProps) {
   return (
     <header
       style={{
@@ -81,39 +169,12 @@ export function TopBar({ title, setPage }: TopBarProps) {
           flexWrap: 'wrap',
         }}
       >
-        <button
-          onClick={() => {
-            const hasResult = localStorage.getItem('vectra-result')
-            setPage(hasResult ? 'strategy' : 'dashboard')
-          }}
-          style={{
-            padding: '9px 18px',
-            background: 'transparent',
-            border: '1px solid #4F7CFF',
-            borderRadius: 5,
-            color: '#4F7CFF',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 10,
-            cursor: 'pointer',
-            letterSpacing: '0.1em',
-          }}
-        >
-          EXECUTE STRATEGY
-        </button>
-
-        <button
-          onClick={() => setPage('history')}
-          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-        >
-          <Bell size={16} color="#4A5568" />
-        </button>
-
-        <button
-          onClick={() => setPage('settings')}
-          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-        >
-          <User size={16} color="#4A5568" />
-        </button>
+        <WalletButton
+          address={walletAddress}
+          connected={isWalletConnected}
+          onConnect={onWalletConnect}
+          onDisconnect={onWalletDisconnect}
+        />
       </div>
     </header>
   )

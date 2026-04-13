@@ -1,172 +1,520 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AlertTriangle, Radio, CheckCircle2, Download } from 'lucide-react'
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Download,
+  Send,
+  XCircle,
+  RefreshCw,
+  Zap,
+  Eye,
+} from 'lucide-react'
 import { MonoBadge, StatusChip } from '@/components/ui/primitives'
 import { parseVectraOutput } from '@/lib/utils'
 
-const stripMd = (text: string) => text.replace(/\*\*/g, '').replace(/\*/g, '').trim()
+const stripMd = (text: string) =>
+  text?.replace(/\*\*/g, '').replace(/\*/g, '').trim() || ''
 
-export function StrategyPage() {
+const VERDICT_CONFIG = {
+  EXECUTE: {
+    color: '#10B981',
+    bg: 'rgba(16,185,129,0.08)',
+    border: 'rgba(16,185,129,0.3)',
+    icon: Zap,
+  },
+  RESTRUCTURE: {
+    color: '#F59E0B',
+    bg: 'rgba(245,158,11,0.08)',
+    border: 'rgba(245,158,11,0.3)',
+    icon: RefreshCw,
+  },
+  KILL: {
+    color: '#EF4444',
+    bg: 'rgba(239,68,68,0.08)',
+    border: 'rgba(239,68,68,0.3)',
+    icon: XCircle,
+  },
+}
+
+const TELEGRAM_BOT = 'https://t.me/VectraStrategicBot'
+
+interface StrategyPageProps {
+  wallet?: string
+}
+
+export function StrategyPage({ wallet }: StrategyPageProps) {
+  const [publishing, setPublishing] = useState(false)
+  const [cid, setCid] = useState('')
+  const [ipfsUrl, setIpfsUrl] = useState('')
   const [analysis, setAnalysis] = useState<ReturnType<typeof parseVectraOutput> | null>(null)
   const [idea, setIdea] = useState('')
   const [hasRealData, setHasRealData] = useState(false)
   const [rawOutput, setRawOutput] = useState('')
+  const [analysisHash, setAnalysisHash] = useState('')
   const [isMobile, setIsMobile] = useState(false)
-  const [isTablet, setIsTablet] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem('vectra-result')
-    const storedIdea = localStorage.getItem('vectra-idea')
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  useEffect(() => {
+    const key = wallet ? `vectra-result-${wallet}` : 'vectra-result'
+    const ideaKey = wallet ? `vectra-idea-${wallet}` : 'vectra-idea'
+    const hashKey = wallet ? `vectra-hash-${wallet}` : 'vectra-hash'
+
+    const stored = localStorage.getItem(key)
+    const storedIdea = localStorage.getItem(ideaKey)
+    const storedHash = localStorage.getItem(hashKey)
 
     if (stored && stored.trim().length > 0) {
       try {
         const parsed = parseVectraOutput(stored)
         setAnalysis(parsed)
         setHasRealData(true)
-        setRawOutput(stored.slice(0, 500))
+        setRawOutput(stored.slice(0, 600))
       } catch {
+        setAnalysis(null)
         setHasRealData(false)
       }
     }
 
     if (storedIdea) setIdea(storedIdea)
-  }, [])
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768)
-      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1100)
-    }
-
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+    if (storedHash) setAnalysisHash(storedHash)
+  }, [wallet])
 
   const feasibilityScore = analysis?.feasibilityScore ?? 0
-  const scoreVerdict = stripMd(analysis?.scoreVerdict ?? 'NO REPORT')
+  const scoreVerdict = stripMd(analysis?.scoreVerdict ?? '')
   const strategicReading = stripMd(analysis?.strategicReading ?? '')
+  const assumptions = analysis?.hiddenAssumptions ?? []
+  const weaknesses = analysis?.criticalWeaknesses ?? []
+  const rejectedPaths = analysis?.rejectedPaths ?? []
   const recommendedName = stripMd(analysis?.recommendedDirection?.name ?? '')
   const recommendedDesc = stripMd(analysis?.recommendedDirection?.description ?? '')
   const recommendedConf = analysis?.recommendedDirection?.confidence ?? 0
+  const roadmap = analysis?.executionRoadmap ?? []
+  const buildItems = analysis?.mvpScope?.build ?? []
+  const skipItems = analysis?.mvpScope?.skip ?? []
+  const verdict = analysis?.verdict ?? { value: '', reasons: [] }
 
-  const weaknesses =
-    analysis?.criticalWeaknesses?.length && analysis.criticalWeaknesses[0]?.name
-      ? analysis.criticalWeaknesses.map((w) => ({
-          name: stripMd(w.name),
-          description: stripMd(w.description),
-        }))
-      : []
+  const verdictCfg = verdict.value
+    ? VERDICT_CONFIG[verdict.value as keyof typeof VERDICT_CONFIG]
+    : null
+  const VerdictIcon = verdictCfg?.icon ?? Zap
 
-  const rejectedPaths =
-    analysis?.rejectedPaths?.length && analysis.rejectedPaths[0]?.name
-      ? analysis.rejectedPaths.map((r) => ({
-          name: stripMd(r.name),
-          reason: stripMd(r.reason),
-        }))
-      : []
+  const dossierTitle = idea
+    ? idea.slice(0, 50) + (idea.length > 50 ? '...' : '')
+    : 'No analysis yet'
 
-  const buildItems = analysis?.mvpScope?.build?.length
-    ? analysis.mvpScope.build.map(stripMd)
-    : []
+  const handleDownload = () => {
+    const raw = localStorage.getItem(wallet ? `vectra-result-${wallet}` : 'vectra-result')
+    if (!raw) return
 
-  const skipItems = analysis?.mvpScope?.skip?.length
-    ? analysis.mvpScope.skip.map(stripMd)
-    : []
+    const blob = new Blob([raw], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `vectra-analysis-${Date.now()}.txt`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
-  const roadmap = analysis?.executionRoadmap?.length
-    ? analysis.executionRoadmap.map((step, i) => ({
-        phase: stripMd(step),
-        period: '',
-        active: i === 0,
-      }))
-    : []
+  const handleTelegram = () => {
+    const param = encodeURIComponent(idea.slice(0, 100))
+    window.open(`${TELEGRAM_BOT}?start=${param}`, '_blank')
+  }
 
-  const dossierTitle = idea ? idea.slice(0, 40) + (idea.length > 40 ? '...' : '') : 'Strategy Report'
-  const dossierSubtitle = hasRealData ? 'Strategic Intelligence Report' : 'Awaiting Analysis'
+  const handlePublish = async () => {
+    if (!hasRealData || publishing) return
+    setPublishing(true)
+
+    try {
+      const raw = localStorage.getItem(
+        wallet ? `vectra-result-${wallet}` : 'vectra-result'
+      )
+
+      const res = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          result: raw,
+          idea,
+          score: feasibilityScore,
+          verdict: verdict.value,
+          wallet: wallet || '',
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        console.error('Publish failed:', data)
+        alert(data?.error || 'Failed to save report')
+        return
+      }
+
+      if (data.cid) {
+        setCid(data.cid)
+        setIpfsUrl(data.ipfsUrl)
+
+        const histKey = wallet ? `vectra-history-${wallet}` : 'vectra-history'
+        const existing = JSON.parse(localStorage.getItem(histKey) || '[]')
+
+        if (existing[0]) {
+          existing[0].cid = data.cid
+          existing[0].ipfsUrl = data.ipfsUrl
+          localStorage.setItem(histKey, JSON.stringify(existing))
+        }
+      }
+    } catch (err) {
+      console.error('Publish failed:', err)
+      alert('Failed to save report')
+    } finally {
+      setPublishing(false)
+    }
+  }
+
+  if (!hasRealData) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 'calc(100vh - 84px)',
+          flexDirection: 'column',
+          gap: 16,
+        }}
+      >
+        <Eye size={32} color="#1E293B" />
+        <div
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 12,
+            color: '#4A5568',
+            letterSpacing: '0.1em',
+          }}
+        >
+          NO ANALYSIS FOUND
+        </div>
+        <div
+          style={{
+            fontFamily: "'Sora', sans-serif",
+            fontSize: 13,
+            color: '#64748B',
+          }}
+        >
+          Submit an idea from the Dashboard to generate a strategy report.
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: isMobile || isTablet ? '1fr' : '1fr 280px',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 280px',
         minHeight: 'calc(100vh - 84px)',
       }}
     >
       {/* ── Main ── */}
       <div
         style={{
-          padding: isMobile ? 16 : 28,
+          padding: 28,
           overflowY: 'auto',
           display: 'flex',
           flexDirection: 'column',
           gap: 20,
         }}
       >
-        {/* Dossier header */}
+        {/* Header */}
         <div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: isMobile ? 'flex-start' : 'center',
-              flexWrap: 'wrap',
-              gap: 12,
-              marginBottom: 8,
-              flexDirection: isMobile ? 'column' : 'row',
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
             <MonoBadge color="#EF4444">CLASSIFIED</MonoBadge>
             <span
               style={{
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 10,
                 color: '#4A5568',
-                wordBreak: 'break-word',
               }}
             >
-              DOSSIER ID: VCTR-{Math.random().toString(36).slice(2, 7).toUpperCase()}-X
+              DOSSIER ID: VCTR-{Math.random().toString(36).slice(2, 8).toUpperCase()}-X
             </span>
-            {hasRealData ? (
-              <MonoBadge color="#10B981">LIVE ANALYSIS</MonoBadge>
-            ) : (
-              <MonoBadge color="#64748B">NO REPORT</MonoBadge>
-            )}
+            <MonoBadge color="#10B981">LIVE ANALYSIS</MonoBadge>
           </div>
 
           <h1
             style={{
               fontFamily: "'Sora', sans-serif",
-              fontSize: isMobile ? 26 : 34,
+              fontSize: 28,
               fontWeight: 800,
               color: '#E6EEF8',
-              lineHeight: 1.1,
+              lineHeight: 1.2,
+              marginBottom: 6,
             }}
           >
             {dossierTitle}
           </h1>
 
-          <h2
-            style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: isMobile ? 18 : 24,
-              fontWeight: 600,
-              color: '#4F7CFF',
-              lineHeight: 1.2,
-              marginBottom: 12,
-            }}
-          >
-            {dossierSubtitle}
-          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+            {[
+              { label: 'GENERATED BY', val: 'VECTRA STRATEGIC AI' },
+              { label: 'MODEL', val: 'QWEN3.5-9B / NOSANA' },
+              { label: 'STATUS', val: 'COMPLETE' },
+            ].map(({ label, val }) => (
+              <div key={label}>
+                <div
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 9,
+                    color: '#4A5568',
+                    letterSpacing: '0.1em',
+                    marginBottom: 2,
+                  }}
+                >
+                  {label}
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 10,
+                    color: '#94A3B8',
+                  }}
+                >
+                  {val}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {analysisHash && (
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                marginTop: 10,
+                padding: '5px 12px',
+                background: 'rgba(79,124,255,0.06)',
+                border: '1px solid rgba(79,124,255,0.2)',
+                borderRadius: 4,
+              }}
+            >
+              <div
+                style={{
+                  width: 5,
+                  height: 5,
+                  borderRadius: '50%',
+                  background: '#4F7CFF',
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 9,
+                  color: '#4A5568',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                ANALYSIS HASH:
+              </span>
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 9,
+                  color: '#4F7CFF',
+                  letterSpacing: '0.08em',
+                  wordBreak: 'break-all',
+                }}
+              >
+                {analysisHash}
+              </span>
+            </div>
+          )}
         </div>
 
-        {!hasRealData ? (
+        {/* 01 Strategic Reading */}
+        {strategicReading && (
           <div
             style={{
-              background: '#05070F',
+              background: '#080C15',
               border: '1px solid #1E293B',
-              borderRadius: 12,
-              padding: isMobile ? 20 : 28,
+              borderRadius: 10,
+              padding: 24,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: '#22D3EE',
+                letterSpacing: '0.15em',
+                marginBottom: 14,
+              }}
+            >
+              01 / STRATEGIC READING
+            </div>
+            <p
+              style={{
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 13,
+                color: '#94A3B8',
+                lineHeight: 1.8,
+              }}
+            >
+              {strategicReading}
+            </p>
+          </div>
+        )}
+
+        {/* 02 Hidden Assumptions */}
+        {assumptions.length > 0 && (
+          <div
+            style={{
+              background: '#080C15',
+              border: '1px solid #1E293B',
+              borderRadius: 10,
+              padding: 24,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: '#8B5CF6',
+                letterSpacing: '0.15em',
+                marginBottom: 14,
+              }}
+            >
+              02 / HIDDEN ASSUMPTIONS
+            </div>
+            {assumptions.map(({ name, description }, i) => (
+              <div key={i} style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
+                <div
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: '50%',
+                    background: 'rgba(139,92,246,0.1)',
+                    border: '1px solid rgba(139,92,246,0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    marginTop: 1,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 8,
+                      color: '#8B5CF6',
+                    }}
+                  >
+                    {i + 1}
+                  </span>
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: '#E6EEF8',
+                      marginBottom: 4,
+                    }}
+                  >
+                    {name}
+                  </div>
+                  <p
+                    style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 11,
+                      color: '#64748B',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 03 Failure Points */}
+        {weaknesses.length > 0 && (
+          <div
+            style={{
+              background: '#080C15',
+              border: '1px solid #1E293B',
+              borderRadius: 10,
+              padding: 24,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: '#EF4444',
+                letterSpacing: '0.15em',
+                marginBottom: 14,
+              }}
+            >
+              03 / FAILURE POINTS
+            </div>
+            {weaknesses.map(({ name, description }, i) => (
+              <div
+                key={i}
+                style={{
+                  marginBottom: 14,
+                  padding: '12px 14px',
+                  background: 'rgba(239,68,68,0.04)',
+                  border: '1px solid rgba(239,68,68,0.15)',
+                  borderRadius: 6,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <AlertTriangle size={12} color="#EF4444" />
+                  <span
+                    style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: '#EF4444',
+                    }}
+                  >
+                    {name}
+                  </span>
+                </div>
+                <p
+                  style={{
+                    fontFamily: "'Sora', sans-serif",
+                    fontSize: 11,
+                    color: '#64748B',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {description}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 04 Rejected Paths */}
+        {rejectedPaths.length > 0 && (
+          <div
+            style={{
+              background: '#080C15',
+              border: '1px solid #1E293B',
+              borderRadius: 10,
+              padding: 24,
             }}
           >
             <div
@@ -175,399 +523,419 @@ export function StrategyPage() {
                 fontSize: 9,
                 color: '#64748B',
                 letterSpacing: '0.15em',
+                marginBottom: 16,
+              }}
+            >
+              04 / REJECTED PATHS
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${Math.min(rejectedPaths.length, 3)}, 1fr)`,
+                gap: 14,
+              }}
+            >
+              {rejectedPaths.slice(0, 3).map(({ name, reason }, i) => (
+                <div key={i} style={{ opacity: 0.6 }}>
+                  <div
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 9,
+                      color: '#64748B',
+                      marginBottom: 6,
+                      textDecoration: 'line-through',
+                    }}
+                  >
+                    {name}
+                  </div>
+                  <p
+                    style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 11,
+                      color: '#4A5568',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {reason}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 05 Winning Direction */}
+        {recommendedName && (
+          <div
+            style={{
+              background: '#080C15',
+              border: '1px solid #1E3A5F',
+              borderRadius: 10,
+              padding: 24,
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 2,
+                background: 'linear-gradient(90deg, #4F7CFF, #22D3EE)',
+              }}
+            />
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: '#4F7CFF',
+                letterSpacing: '0.15em',
                 marginBottom: 14,
               }}
             >
-              REPORT STATUS
+              05 / WINNING DIRECTION
             </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ flex: 1 }}>
+                <h2
+                  style={{
+                    fontFamily: "'Sora', sans-serif",
+                    fontSize: 20,
+                    fontWeight: 800,
+                    color: '#E6EEF8',
+                    marginBottom: 10,
+                  }}
+                >
+                  {recommendedName}
+                </h2>
+                <p
+                  style={{
+                    fontFamily: "'Sora', sans-serif",
+                    fontSize: 13,
+                    color: '#94A3B8',
+                    lineHeight: 1.7,
+                    maxWidth: 440,
+                  }}
+                >
+                  {recommendedDesc}
+                </p>
+              </div>
+              {recommendedConf > 0 && (
+                <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 24 }}>
+                  <div
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 9,
+                      color: '#64748B',
+                      marginBottom: 4,
+                    }}
+                  >
+                    CONFIDENCE
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 28,
+                      fontWeight: 700,
+                      color: '#22D3EE',
+                    }}
+                  >
+                    {recommendedConf}%
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
-            <h3
+        {/* 06 Execution Plan */}
+        {roadmap.length > 0 && (
+          <div
+            style={{
+              background: '#080C15',
+              border: '1px solid #1E293B',
+              borderRadius: 10,
+              padding: 24,
+            }}
+          >
+            <div
               style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: isMobile ? 20 : 24,
-                fontWeight: 800,
-                color: '#E6EEF8',
-                marginBottom: 10,
-              }}
-            >
-              No strategy report yet
-            </h3>
-
-            <p
-              style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: 13,
-                color: '#94A3B8',
-                lineHeight: 1.7,
-                maxWidth: 620,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: '#22D3EE',
+                letterSpacing: '0.15em',
                 marginBottom: 18,
               }}
             >
-              Run an analysis from the dashboard to generate a real strategy report. This page only shows actual output after analysis has been completed.
-            </p>
+              06 / EXECUTION PLAN
+            </div>
+            {roadmap.map((step, i) => (
+              <div key={i} style={{ display: 'flex', gap: 14, marginBottom: 16 }}>
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    border: `2px solid ${i === 0 ? '#22D3EE' : '#1E293B'}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    background: i === 0 ? 'rgba(34,211,238,0.08)' : 'transparent',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 9,
+                      color: i === 0 ? '#22D3EE' : '#4A5568',
+                    }}
+                  >
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                </div>
+                <div style={{ paddingTop: 4 }}>
+                  <p
+                    style={{
+                      fontFamily: "'Sora', sans-serif",
+                      fontSize: 12,
+                      color: i === 0 ? '#E6EEF8' : '#64748B',
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {step}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-            <div
-              style={{
-                background: '#0A0C14',
-                border: '1px solid #1E293B',
-                borderRadius: 8,
-                padding: 16,
-              }}
-            >
+        {/* 07 MVP Scope */}
+        {(buildItems.length > 0 || skipItems.length > 0) && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {buildItems.length > 0 && (
               <div
                 style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: 10,
-                  color: '#64748B',
-                  lineHeight: 1.8,
+                  background: '#080C15',
+                  border: '1px solid #1E293B',
+                  borderRadius: 10,
+                  padding: 20,
                 }}
               >
-                {`> 01. Open dashboard`}
-                <br />
-                {`> 02. Enter your idea or hypothesis`}
-                <br />
-                {`> 03. Run analysis`}
-                <br />
-                {`> 04. Return here for the full report`}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <>
-            {/* Strategic reading */}
-            {strategicReading && (
-              <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: isMobile ? 16 : 24 }}>
                 <div
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 9,
-                    color: '#22D3EE',
-                    letterSpacing: '0.15em',
-                    marginBottom: 14,
+                    color: '#10B981',
+                    letterSpacing: '0.12em',
+                    marginBottom: 12,
                   }}
                 >
-                  01 / STRATEGIC READING
+                  BUILD THESE
                 </div>
-
-                {strategicReading.split('\n\n').map((para, i, arr) => (
-                  <p
-                    key={i}
-                    style={{
-                      fontFamily: "'Sora', sans-serif",
-                      fontSize: 13,
-                      color: '#94A3B8',
-                      lineHeight: 1.8,
-                      marginBottom: i < arr.length - 1 ? 16 : 0,
-                    }}
-                  >
-                    {stripMd(para)}
-                  </p>
+                {buildItems.map((item, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+                    <CheckCircle2 size={13} color="#10B981" style={{ flexShrink: 0, marginTop: 2 }} />
+                    <span
+                      style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontSize: 12,
+                        color: '#94A3B8',
+                      }}
+                    >
+                      {item}
+                    </span>
+                  </div>
                 ))}
               </div>
             )}
 
-            {/* Recommended build direction */}
-            {(recommendedName || recommendedDesc) && (
-              <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: isMobile ? 16 : 24 }}>
-                <div
-                  style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 9,
-                    color: '#64748B',
-                    letterSpacing: '0.15em',
-                    marginBottom: 14,
-                  }}
-                >
-                  02 / RECOMMENDED BUILD DIRECTION
-                </div>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    flexDirection: isMobile ? 'column' : 'row',
-                    gap: isMobile ? 16 : 0,
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <h2
-                      style={{
-                        fontFamily: "'Sora', sans-serif",
-                        fontSize: isMobile ? 18 : 22,
-                        fontWeight: 800,
-                        color: '#E6EEF8',
-                        marginBottom: 12,
-                      }}
-                    >
-                      {recommendedName}
-                    </h2>
-                    <p
-                      style={{
-                        fontFamily: "'Sora', sans-serif",
-                        fontSize: 12,
-                        color: '#64748B',
-                        lineHeight: 1.7,
-                        maxWidth: 420,
-                      }}
-                    >
-                      {recommendedDesc}
-                    </p>
-                  </div>
-
-                  <div style={{ textAlign: isMobile ? 'left' : 'right', flexShrink: 0, marginLeft: isMobile ? 0 : 24 }}>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 9, color: '#64748B', marginBottom: 4 }}>
-                      CONFIDENCE
-                    </div>
-                    <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 26, fontWeight: 700, color: '#22D3EE' }}>
-                      {recommendedConf}%
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Critical weaknesses */}
-            {weaknesses.length > 0 && (
-              <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: isMobile ? 16 : 22 }}>
+            {skipItems.length > 0 && (
+              <div
+                style={{
+                  background: '#080C15',
+                  border: '1px solid #1E293B',
+                  borderRadius: 10,
+                  padding: 20,
+                }}
+              >
                 <div
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 9,
                     color: '#EF4444',
-                    letterSpacing: '0.15em',
-                    marginBottom: 14,
+                    letterSpacing: '0.12em',
+                    marginBottom: 12,
                   }}
                 >
-                  03 / CRITICAL WEAKNESSES
+                  SKIP THESE
                 </div>
-
-                {weaknesses.slice(0, 3).map(({ name, description }, i) => (
-                  <div key={i} style={{ marginBottom: 14 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                      {i === 0 ? <AlertTriangle size={13} color="#EF4444" /> : <Radio size={13} color="#F59E0B" />}
-                      <span
-                        style={{
-                          fontFamily: "'Sora', sans-serif",
-                          fontSize: 12,
-                          fontWeight: 600,
-                          color: '#E6EEF8',
-                        }}
-                      >
-                        {name}
-                      </span>
+                {skipItems.map((item, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+                    <div
+                      style={{
+                        width: 13,
+                        height: 13,
+                        flexShrink: 0,
+                        marginTop: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <div style={{ width: 8, height: 1, background: '#EF4444' }} />
                     </div>
-                    <p style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, color: '#64748B', lineHeight: 1.5 }}>
-                      {description}
-                    </p>
+                    <span
+                      style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontSize: 12,
+                        color: '#4A5568',
+                        textDecoration: 'line-through',
+                      }}
+                    >
+                      {item}
+                    </span>
                   </div>
                 ))}
               </div>
             )}
+          </div>
+        )}
 
-            {/* Rejected alternatives */}
-            {rejectedPaths.length > 0 && (
-              <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: isMobile ? 16 : 22 }}>
+        {/* 08 VERDICT */}
+        {verdict.value && verdictCfg && (
+          <div
+            style={{
+              background: verdictCfg.bg,
+              border: `2px solid ${verdictCfg.border}`,
+              borderRadius: 10,
+              padding: 28,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: verdictCfg.color,
+                letterSpacing: '0.15em',
+                marginBottom: 16,
+              }}
+            >
+              08 / FINAL VERDICT
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
+              <div
+                style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: 8,
+                  background: `${verdictCfg.color}20`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <VerdictIcon size={24} color={verdictCfg.color} />
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Sora', sans-serif",
+                  fontSize: 40,
+                  fontWeight: 900,
+                  color: verdictCfg.color,
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {verdict.value}
+              </div>
+            </div>
+            {verdict.reasons.length > 0 && (
+              <div style={{ marginBottom: 24 }}>
                 <div
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 9,
                     color: '#64748B',
-                    letterSpacing: '0.15em',
-                    marginBottom: 16,
+                    letterSpacing: '0.1em',
+                    marginBottom: 12,
                   }}
                 >
-                  04 / REJECTED ALTERNATIVES
+                  WHY THIS VERDICT:
                 </div>
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : `repeat(${Math.min(rejectedPaths.length, 3)}, 1fr)`,
-                    gap: 16,
-                  }}
-                >
-                  {rejectedPaths.slice(0, 3).map(({ name, reason }, i) => (
-                    <div key={i} style={{ opacity: 0.55 }}>
-                      <div
-                        style={{
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: 9,
-                          color: '#64748B',
-                          letterSpacing: '0.1em',
-                          marginBottom: 8,
-                          textDecoration: 'line-through',
-                        }}
-                      >
-                        {name}
-                      </div>
-                      <p style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, color: '#4A5568', lineHeight: 1.6 }}>
-                        {reason}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                {verdict.reasons.map((reason, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+                    <div
+                      style={{
+                        width: 5,
+                        height: 5,
+                        borderRadius: '50%',
+                        background: verdictCfg.color,
+                        flexShrink: 0,
+                        marginTop: 6,
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontSize: 13,
+                        color: '#94A3B8',
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {stripMd(reason)}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
-
-            {/* Execution timeline + MVP scope */}
-            {(roadmap.length > 0 || buildItems.length > 0 || skipItems.length > 0) && (
-              <div
+            <div style={{ paddingTop: 20, borderTop: `1px solid ${verdictCfg.border}` }}>
+              <button
+                onClick={handleTelegram}
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: isMobile || isTablet ? '1fr' : '1fr 1fr',
-                  gap: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  background: 'transparent',
+                  border: `1px solid ${verdictCfg.color}`,
+                  borderRadius: 6,
+                  padding: '12px 20px',
+                  cursor: 'pointer',
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 10,
+                  color: verdictCfg.color,
+                  letterSpacing: '0.1em',
                 }}
               >
-                {roadmap.length > 0 && (
-                  <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: isMobile ? 16 : 22 }}>
-                    <div
-                      style={{
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontSize: 9,
-                        color: '#22D3EE',
-                        letterSpacing: '0.15em',
-                        marginBottom: 18,
-                      }}
-                    >
-                      05 / EXECUTION TIMELINE
-                    </div>
-
-                    {roadmap.slice(0, 4).map(({ phase, period, active }, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 14, marginBottom: 18 }}>
-                        <div
-                          style={{
-                            width: 12,
-                            height: 12,
-                            borderRadius: '50%',
-                            flexShrink: 0,
-                            marginTop: 3,
-                            background: active ? '#22D3EE' : '#1E293B',
-                            border: `2px solid ${active ? '#22D3EE' : '#4A5568'}`,
-                            boxShadow: active ? '0 0 8px #22D3EE' : 'none',
-                          }}
-                        />
-                        <div>
-                          <div
-                            style={{
-                              fontFamily: "'Sora', sans-serif",
-                              fontSize: 12,
-                              fontWeight: 600,
-                              color: active ? '#E6EEF8' : '#64748B',
-                              marginBottom: 4,
-                            }}
-                          >
-                            {phase}
-                          </div>
-                          {period && <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, color: '#4A5568', lineHeight: 1.5 }}>{period}</div>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {(buildItems.length > 0 || skipItems.length > 0) && (
-                  <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: isMobile ? 16 : 22 }}>
-                    <div
-                      style={{
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontSize: 9,
-                        color: '#22D3EE',
-                        letterSpacing: '0.15em',
-                        marginBottom: 16,
-                      }}
-                    >
-                      06 / MVP SCOPE
-                    </div>
-
-                    {buildItems.length > 0 && (
-                      <div style={{ marginBottom: 16 }}>
-                        <div
-                          style={{
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontSize: 9,
-                            color: '#10B981',
-                            letterSpacing: '0.1em',
-                            marginBottom: 10,
-                          }}
-                        >
-                          BUILD
-                        </div>
-
-                        {buildItems.map((item, i) => (
-                          <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-                            <CheckCircle2 size={13} color="#10B981" style={{ flexShrink: 0, marginTop: 2 }} />
-                            <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, color: '#94A3B8' }}>{item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {skipItems.length > 0 && (
-                      <div style={{ marginBottom: 16 }}>
-                        <div
-                          style={{
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontSize: 9,
-                            color: '#EF4444',
-                            letterSpacing: '0.1em',
-                            marginBottom: 10,
-                          }}
-                        >
-                          SKIP
-                        </div>
-
-                        {skipItems.map((item, i) => (
-                          <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-                            <div
-                              style={{
-                                width: 13,
-                                height: 13,
-                                flexShrink: 0,
-                                marginTop: 2,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}
-                            >
-                              <div style={{ width: 8, height: 1, background: '#EF4444' }} />
-                            </div>
-                            <span
-                              style={{
-                                fontFamily: "'Sora', sans-serif",
-                                fontSize: 12,
-                                color: '#4A5568',
-                                textDecoration: 'line-through',
-                              }}
-                            >
-                              {item}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </>
+                <Send size={13} /> CONTINUE EXECUTION IN TELEGRAM
+              </button>
+            </div>
+          </div>
         )}
       </div>
 
       {/* ── Right Rail ── */}
       <div
         style={{
-          padding: isMobile ? '0 16px 16px' : isTablet ? '0 28px 28px' : '28px 20px',
-          borderLeft: !isMobile && !isTablet ? '1px solid #1E293B' : 'none',
-          borderTop: isMobile || isTablet ? '1px solid #1E293B' : 'none',
+          padding: '28px 20px',
+          borderLeft: '1px solid #1E293B',
           display: 'flex',
           flexDirection: 'column',
           gap: 16,
           overflowY: 'auto',
         }}
       >
-        {/* Feasibility verdict */}
-        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 20 }}>
+        {/* Score ring */}
+        <div
+          style={{
+            background: '#080C15',
+            border: '1px solid #1E293B',
+            borderRadius: 10,
+            padding: 20,
+          }}
+        >
           <div
             style={{
               fontFamily: "'JetBrains Mono', monospace",
@@ -577,9 +945,8 @@ export function StrategyPage() {
               marginBottom: 16,
             }}
           >
-            FEASIBILITY VERDICT
+            FEASIBILITY SCORE
           </div>
-
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
             <div
               style={{
@@ -587,7 +954,7 @@ export function StrategyPage() {
                 height: 80,
                 borderRadius: '50%',
                 border: '3px solid #22D3EE',
-                boxShadow: '0 0 20px rgba(34,211,238,0.3)',
+                boxShadow: '0 0 20px rgba(34,211,238,0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -604,7 +971,7 @@ export function StrategyPage() {
                     textAlign: 'center',
                   }}
                 >
-                  {hasRealData ? feasibilityScore : '—'}
+                  {feasibilityScore}
                 </div>
                 <div
                   style={{
@@ -619,32 +986,18 @@ export function StrategyPage() {
               </div>
             </div>
           </div>
-
           <button
-            onClick={() => {
-              const raw = localStorage.getItem('vectra-result')
-              if (!raw) return
-
-              const blob = new Blob([raw], { type: 'text/plain' })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              a.href = url
-              a.download = `vectra-analysis-${Date.now()}.txt`
-              a.click()
-              URL.revokeObjectURL(url)
-            }}
-            disabled={!hasRealData}
+            onClick={handleDownload}
             style={{
               width: '100%',
-              marginTop: 14,
               padding: 10,
               background: 'transparent',
               border: '1px solid #1E293B',
               borderRadius: 5,
-              color: hasRealData ? '#94A3B8' : '#4A5568',
+              color: '#94A3B8',
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: 9,
-              cursor: hasRealData ? 'pointer' : 'not-allowed',
+              cursor: 'pointer',
               letterSpacing: '0.1em',
               display: 'flex',
               alignItems: 'center',
@@ -652,12 +1005,114 @@ export function StrategyPage() {
               gap: 8,
             }}
           >
-            <Download size={11} /> DOWNLOAD RAW INTELLIGENCE
+            <Download size={11} /> DOWNLOAD REPORT
           </button>
         </div>
 
-        {/* Status chips */}
-        <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        {!cid ? (
+          <button
+            onClick={handlePublish}
+            disabled={publishing}
+            style={{
+              width: '100%',
+              marginTop: 8,
+              padding: 10,
+              background: publishing ? 'rgba(139,92,246,0.05)' : 'transparent',
+              border: '1px solid rgba(139,92,246,0.3)',
+              borderRadius: 5,
+              color: '#8B5CF6',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 9,
+              cursor: publishing ? 'not-allowed' : 'pointer',
+              letterSpacing: '0.1em',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+            }}
+          >
+            {publishing ? 'SAVING REPORT...' : 'SAVE REPORT PERMANENTLY'}
+          </button>
+        ) : (
+          <div
+            style={{
+              marginTop: 8,
+              padding: 10,
+              background: 'rgba(139,92,246,0.08)',
+              border: '1px solid rgba(139,92,246,0.3)',
+              borderRadius: 5,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: '#8B5CF6',
+                marginBottom: 6,
+              }}
+            >
+              REPORT SAVED — PERMANENT LINK
+            </div>
+            <div
+              onClick={() => window.open(ipfsUrl, '_blank')}
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 8,
+                color: '#64748B',
+                cursor: 'pointer',
+                wordBreak: 'break-all',
+                lineHeight: 1.6,
+              }}
+            >
+              View report →
+            </div>
+          </div>
+        )}
+
+        {/* Verdict quick view */}
+        {verdict.value && verdictCfg && (
+          <div
+            style={{
+              background: verdictCfg.bg,
+              border: `1px solid ${verdictCfg.border}`,
+              borderRadius: 10,
+              padding: 18,
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 9,
+                color: '#64748B',
+                letterSpacing: '0.12em',
+                marginBottom: 8,
+              }}
+            >
+              VERDICT
+            </div>
+            <div
+              style={{
+                fontFamily: "'Sora', sans-serif",
+                fontSize: 26,
+                fontWeight: 900,
+                color: verdictCfg.color,
+              }}
+            >
+              {verdict.value}
+            </div>
+          </div>
+        )}
+
+        {/* Execution flags */}
+        <div
+          style={{
+            background: '#080C15',
+            border: '1px solid #1E293B',
+            borderRadius: 10,
+            padding: 18,
+          }}
+        >
           <div
             style={{
               fontFamily: "'JetBrains Mono', monospace",
@@ -669,17 +1124,32 @@ export function StrategyPage() {
           >
             EXECUTION FLAGS
           </div>
-
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <StatusChip label={hasRealData ? 'ANALYSIS COMPLETE' : 'NO ANALYSIS YET'} color={hasRealData ? '#10B981' : '#4A5568'} />
-            {hasRealData && weaknesses.length > 0 && <StatusChip label="RISK SIGNALS DETECTED" color="#F59E0B" />}
-            {hasRealData && recommendedName && <StatusChip label="EXECUTION PATH SELECTED" color="#4F7CFF" />}
+            <StatusChip label="ANALYSIS COMPLETE" color="#10B981" />
+            <StatusChip label="WEAK PATHS REJECTED" color="#EF4444" />
+            <StatusChip label="EXECUTION PATH SELECTED" color="#4F7CFF" />
+            {verdict.value === 'EXECUTE' && (
+              <StatusChip label="CLEARED FOR EXECUTION" color="#10B981" />
+            )}
+            {verdict.value === 'RESTRUCTURE' && (
+              <StatusChip label="RESTRUCTURE REQUIRED" color="#F59E0B" />
+            )}
+            {verdict.value === 'KILL' && (
+              <StatusChip label="IDEA REJECTED" color="#EF4444" />
+            )}
           </div>
         </div>
 
-        {/* Raw output preview */}
-        {hasRealData && (
-          <div style={{ background: '#05070F', border: '1px solid #1E293B', borderRadius: 10, padding: 18 }}>
+        {/* Raw output */}
+        {hasRealData && rawOutput && (
+          <div
+            style={{
+              background: '#080C15',
+              border: '1px solid #1E293B',
+              borderRadius: 10,
+              padding: 18,
+            }}
+          >
             <div
               style={{
                 fontFamily: "'JetBrains Mono', monospace",
@@ -691,14 +1161,13 @@ export function StrategyPage() {
             >
               RAW AGENT OUTPUT
             </div>
-
             <div
               style={{
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 9,
                 color: '#4A5568',
                 lineHeight: 1.7,
-                maxHeight: 200,
+                maxHeight: 180,
                 overflowY: 'auto',
                 background: '#05070F',
                 padding: 10,
